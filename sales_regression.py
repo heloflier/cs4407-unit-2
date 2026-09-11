@@ -8,6 +8,7 @@ and polynomial regression models.
 """
 
 import pandas as pd
+from sklearn.preprocessing import StandardScaler
 
 # ---------------------------------------------------------------------------
 # Step 1: Load the dataset
@@ -80,3 +81,25 @@ df["Promotion"] = df["Promotion"].map(promotion_mapping)
  
 print("\nPromotion column after encoding:")
 print(df["Promotion"].head())
+
+# ---------------------------------------------------------------------------
+# Step 4 / Question 2c: Apply feature scaling
+# ---------------------------------------------------------------------------
+# Scaling puts Advertising_Spend, Store_Size, and Customers on comparable
+# ranges - matters most for polynomial regression later, where squaring or
+# cubing large raw values can cause numerical issues.
+
+print("\n" + "=" * 70)
+print("QUESTION 2c: APPLY FEATURE SCALING")
+print("=" * 70)
+
+feature_columns_to_scale = ["Advertising_Spend", "Store_Size", "Customers"]
+scaler = StandardScaler()
+ 
+print("\nFeature values before scaling:")
+print(df[feature_columns_to_scale].head())
+ 
+df[feature_columns_to_scale] = scaler.fit_transform(df[feature_columns_to_scale])
+ 
+print("\nFeature values after scaling:")
+print(df[feature_columns_to_scale].head())
