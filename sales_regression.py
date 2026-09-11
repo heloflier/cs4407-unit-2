@@ -22,10 +22,32 @@ data = {
 }
 
 df = pd.DataFrame(data)
-
+ 
 print("Dataset preview:")
 print(df)
 print("\nDataset info:")
 print(df.info())
 print("\nMissing values per column:")
 print(df.isna().sum())
+
+# ---------------------------------------------------------------------------
+# Step 2: Handle missing values
+# ---------------------------------------------------------------------------
+# Using median instead of mean since it's more robust to outliers, and with
+# only 10 rows here, one extreme value could throw off the mean easily.
+
+numeric_columns = ["Advertising_Spend", "Store_Size", "Customers"]
+ 
+print("\nRows with missing values (before imputation):")
+print(df[df[numeric_columns].isna().any(axis=1)])
+ 
+for column_name in numeric_columns:
+    column_median = df[column_name].median()
+    df[column_name] = df[column_name].fillna(column_median)
+    print(f"\nImputed '{column_name}' missing value with median = {column_median}")
+ 
+print("\nMissing values per column (after imputation):")
+print(df.isna().sum())
+ 
+print("\nDataset after handling missing values:")
+print(df)
