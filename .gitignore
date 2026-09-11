@@ -19,5 +19,9 @@ Thumbs.db
 # Jupyter
 .ipynb_checkpoints/
 
-# Environment variables (if you ever add API keys, DB creds, etc.)
+# Environment variables
 .env
+
+# Computed Data
+.png
+.gif

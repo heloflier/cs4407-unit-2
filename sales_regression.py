@@ -9,6 +9,10 @@ and polynomial regression models.
 
 import pandas as pd
 from sklearn.preprocessing import StandardScaler
+from sklearn.linear_model import LinearRegression
+import matplotlib
+matplotlib.use("Agg")
+import matplotlib.pyplot as plt
 
 # ---------------------------------------------------------------------------
 # Step 1: Load the dataset
@@ -103,3 +107,32 @@ df[feature_columns_to_scale] = scaler.fit_transform(df[feature_columns_to_scale]
  
 print("\nFeature values after scaling:")
 print(df[feature_columns_to_scale].head())
+
+# ---------------------------------------------------------------------------
+# Step 5 / Question 3.i.a: Simple linear regression (Advertising_Spend only)
+# ---------------------------------------------------------------------------
+# Built on the full preprocessed dataset, as instructed in Question 3. A
+# proper train/test split comes later in Question 4 for performance
+# evaluation.
+
+print("\n" + "=" * 70)
+print("QUESTION 3.i.a: SIMPLE LINEAR REGRESSION")
+print("=" * 70)
+
+X_simple = df[["Advertising_Spend"]]
+y = df["Sales"]
+
+simple_linear_model = LinearRegression()
+simple_linear_model.fit(X_simple, y)
+
+print(f"\nIntercept: {simple_linear_model.intercept_:.2f}")
+print(f"Coefficient (Advertising_Spend): {simple_linear_model.coef_[0]:.2f}")
+
+plt.scatter(df["Advertising_Spend"], y, label="Actual")
+plt.plot(df["Advertising_Spend"], simple_linear_model.predict(X_simple), color="red", label="Predicted")
+plt.xlabel("Advertising Spend (scaled)")
+plt.ylabel("Sales")
+plt.title("Simple Linear Regression Preview")
+plt.legend()
+plt.savefig("simple_linear_preview.png")
+# plt.show()
