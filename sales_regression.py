@@ -10,6 +10,8 @@ and polynomial regression models.
 import pandas as pd
 from sklearn.preprocessing import StandardScaler, PolynomialFeatures
 from sklearn.linear_model import LinearRegression
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
@@ -269,3 +271,56 @@ plt.legend()
 plt.savefig("all_models_actual_vs_predicted.png")
 print("\nSaved plot: all_models_actual_vs_predicted.png")
 # plt.show()
+
+# ---------------------------------------------------------------------------
+# Step 10 / Question 4a: Train/test split and evaluation metrics
+# ---------------------------------------------------------------------------
+# Models are refit on the training split only, rather than reusing the
+# Question 3 models (which were fit on the full dataset) - evaluating a
+# model on data it already saw during training would defeat the purpose
+# of a train/test split. With only 10 rows total, even a 3-row test set
+# is small enough that these metrics should be read as indicative, not
+# precise (see write-up notes for a comparison against a 2-row split).
+
+print("\n" + "=" * 70)
+print("QUESTION 4a: TRAIN/TEST SPLIT AND EVALUATION METRICS")
+print("=" * 70)
+
+train_df, test_df = train_test_split(df, test_size=0.3, random_state=42)
+
+print(f"\nTraining set size: {len(train_df)} rows")
+print(f"Test set size: {len(test_df)} rows")
+
+y_train = train_df["Sales"]
+y_test = test_df["Sales"]
+
+def evaluate_model(model_name, model, X_train, X_test):
+    model.fit(X_train, y_train)
+    predictions = model.predict(X_test)
+    rmse = mean_squared_error(y_test, predictions) ** 0.5
+    mae = mean_absolute_error(y_test, predictions)
+    r2 = r2_score(y_test, predictions)
+    print(f"\n{model_name}:")
+    print(f"  RMSE: {rmse:.2f}")
+    print(f"  MAE: {mae:.2f}")
+    print(f"  R^2: {r2:.4f}")
+    return model, rmse, mae, r2
+
+simple_eval_model, simple_rmse, simple_mae, simple_r2 = evaluate_model(
+    "Simple Linear Regression", LinearRegression(),
+    train_df[["Advertising_Spend"]], test_df[["Advertising_Spend"]]
+)
+
+multiple_eval_model, multiple_rmse, multiple_mae, multiple_r2 = evaluate_model(
+    "Multiple Linear Regression", LinearRegression(),
+    train_df[feature_columns], test_df[feature_columns]
+)
+
+poly_eval_transformer = PolynomialFeatures(degree=2, include_bias=False)
+X_train_poly = poly_eval_transformer.fit_transform(train_df[["Advertising_Spend"]])
+X_test_poly = poly_eval_transformer.transform(test_df[["Advertising_Spend"]])
+
+polynomial_eval_model, poly_rmse, poly_mae, poly_r2 = evaluate_model(
+    "Polynomial Regression", LinearRegression(),
+    X_train_poly, X_test_poly
+)
