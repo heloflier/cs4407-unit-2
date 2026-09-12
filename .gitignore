@@ -23,5 +23,5 @@ Thumbs.db
 .env
 
 # Computed Data
-.png
-.gif
+*.png
+*.gif

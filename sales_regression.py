@@ -37,7 +37,7 @@ df = pd.DataFrame(data)
 print("Dataset preview:")
 print(df)
 print("\nDataset info:")
-print(df.info())
+df.info()
 print("\nMissing values per column:")
 print(df.isna().sum())
 
@@ -160,10 +160,10 @@ print(f"\nIntercept: {multiple_linear_model.intercept_:.2f}")
 for feature_name, coefficient in zip(feature_columns, multiple_linear_model.coef_):
     print(f"Coefficient ({feature_name}): {coefficient:.2f}")
 
-predicted_sales = multiple_linear_model.predict(X_multiple)
+multiple_predicted_sales = multiple_linear_model.predict(X_multiple)
 
 plt.figure()
-plt.scatter(y, predicted_sales, label="Predictions")
+plt.scatter(y, multiple_predicted_sales, label="Predictions")
 plt.plot([y.min(), y.max()], [y.min(), y.max()], color="red", label="Perfect prediction")
 plt.xlabel("Actual Sales")
 plt.ylabel("Predicted Sales")
@@ -261,7 +261,7 @@ polynomial_predicted_sales = polynomial_model.predict(X_poly)
 
 plt.figure()
 plt.scatter(y, simple_predicted_sales, label="Simple Linear")
-plt.scatter(y, predicted_sales, label="Multiple Linear")
+plt.scatter(y, multiple_predicted_sales, label="Multiple Linear")
 plt.scatter(y, polynomial_predicted_sales, label="Polynomial")
 plt.plot([y.min(), y.max()], [y.min(), y.max()], color="red", linestyle="--", label="Perfect prediction")
 plt.xlabel("Actual Sales")
@@ -306,12 +306,12 @@ def evaluate_model(model_name, model, X_train, X_test):
     print(f"  R^2: {r2:.4f}")
     return model, rmse, mae, r2
 
-simple_eval_model, simple_rmse, simple_mae, simple_r2 = evaluate_model(
+evaluate_model(
     "Simple Linear Regression", LinearRegression(),
     train_df[["Advertising_Spend"]], test_df[["Advertising_Spend"]]
 )
 
-multiple_eval_model, multiple_rmse, multiple_mae, multiple_r2 = evaluate_model(
+evaluate_model(
     "Multiple Linear Regression", LinearRegression(),
     train_df[feature_columns], test_df[feature_columns]
 )
@@ -320,7 +320,7 @@ poly_eval_transformer = PolynomialFeatures(degree=2, include_bias=False)
 X_train_poly = poly_eval_transformer.fit_transform(train_df[["Advertising_Spend"]])
 X_test_poly = poly_eval_transformer.transform(test_df[["Advertising_Spend"]])
 
-polynomial_eval_model, poly_rmse, poly_mae, poly_r2 = evaluate_model(
+evaluate_model(
     "Polynomial Regression", LinearRegression(),
     X_train_poly, X_test_poly
 )
@@ -337,14 +337,14 @@ print("\n" + "=" * 70)
 print("QUESTION 4b: RIDGE AND LASSO REGRESSION")
 print("=" * 70)
  
-ridge_model, ridge_rmse, ridge_mae, ridge_r2 = evaluate_model(
+ridge_model, *_ = evaluate_model(
     "Ridge Regression", Ridge(alpha=1.0),
     train_df[feature_columns], test_df[feature_columns]
 )
 for feature_name, coefficient in zip(feature_columns, ridge_model.coef_):
     print(f"  Coefficient ({feature_name}): {coefficient:.2f}")
  
-lasso_model, lasso_rmse, lasso_mae, lasso_r2 = evaluate_model(
+lasso_model, *_ = evaluate_model(
     "Lasso Regression", Lasso(alpha=1.0),
     train_df[feature_columns], test_df[feature_columns]
 )
