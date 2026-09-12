@@ -280,7 +280,7 @@ print("\nSaved plot: all_models_actual_vs_predicted.png")
 # model on data it already saw during training would defeat the purpose
 # of a train/test split. With only 10 rows total, even a 3-row test set
 # is small enough that these metrics should be read as indicative, not
-# precise (see write-up notes for a comparison against a 2-row split).
+# precise.
 
 print("\n" + "=" * 70)
 print("QUESTION 4a: TRAIN/TEST SPLIT AND EVALUATION METRICS")
