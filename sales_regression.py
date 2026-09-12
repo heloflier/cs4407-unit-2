@@ -8,7 +8,7 @@ and polynomial regression models.
 """
 
 import pandas as pd
-from sklearn.preprocessing import StandardScaler
+from sklearn.preprocessing import StandardScaler, PolynomialFeatures
 from sklearn.linear_model import LinearRegression
 import matplotlib
 matplotlib.use("Agg")
@@ -168,5 +168,42 @@ plt.ylabel("Predicted Sales")
 plt.title("Multiple Linear Regression Preview")
 plt.legend()
 plt.savefig("multiple_linear_preview.png")
+# plt.show()
+ 
+ # ---------------------------------------------------------------------------
+# Step 7 / Question 3.i.c: Polynomial regression (degree 2)
+# ---------------------------------------------------------------------------
+# Built on Advertising_Spend alone, same predictor as the simple linear
+# model, to isolate the effect of adding a squared term. Extending
+# polynomial terms across all four features would produce more parameters
+# than data points (10 rows), guaranteeing an overfit.
+ 
+print("\n" + "=" * 70)
+print("QUESTION 3.i.c: POLYNOMIAL REGRESSION (DEGREE 2)")
+print("=" * 70)
+ 
+poly_transformer = PolynomialFeatures(degree=2, include_bias=False)
+X_poly = poly_transformer.fit_transform(X_simple)
+ 
+polynomial_model = LinearRegression()
+polynomial_model.fit(X_poly, y)
+ 
+print(f"\nIntercept: {polynomial_model.intercept_:.2f}")
+print(f"Coefficient (Advertising_Spend): {polynomial_model.coef_[0]:.2f}")
+print(f"Coefficient (Advertising_Spend^2): {polynomial_model.coef_[1]:.2f}")
+ 
+# Sort by Advertising_Spend so the curve draws cleanly left to right
+sort_order = df["Advertising_Spend"].argsort()
+advertising_spend_sorted = df["Advertising_Spend"].values[sort_order]
+predicted_sales_sorted = polynomial_model.predict(X_poly)[sort_order]
+ 
+plt.figure()
+plt.scatter(df["Advertising_Spend"], y, label="Actual")
+plt.plot(advertising_spend_sorted, predicted_sales_sorted, color="red", label="Predicted")
+plt.xlabel("Advertising Spend (scaled)")
+plt.ylabel("Sales")
+plt.title("Polynomial Regression Preview")
+plt.legend()
+plt.savefig("polynomial_preview.png")
 # plt.show()
  
