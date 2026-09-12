@@ -136,3 +136,37 @@ plt.title("Simple Linear Regression Preview")
 plt.legend()
 plt.savefig("simple_linear_preview.png")
 # plt.show()
+
+# ---------------------------------------------------------------------------
+# Step 6 / Question 3.i.b: Multiple linear regression (all features)
+# ---------------------------------------------------------------------------
+# With more than one predictor, there's no single x-axis to plot a fit line
+# against, so the preview below uses actual vs. predicted instead, with a
+# diagonal reference line marking perfect predictions.
+ 
+print("\n" + "=" * 70)
+print("QUESTION 3.i.b: MULTIPLE LINEAR REGRESSION")
+print("=" * 70)
+ 
+feature_columns = ["Advertising_Spend", "Store_Size", "Customers", "Promotion"]
+X_multiple = df[feature_columns]
+ 
+multiple_linear_model = LinearRegression()
+multiple_linear_model.fit(X_multiple, y)
+ 
+print(f"\nIntercept: {multiple_linear_model.intercept_:.2f}")
+for feature_name, coefficient in zip(feature_columns, multiple_linear_model.coef_):
+    print(f"Coefficient ({feature_name}): {coefficient:.2f}")
+ 
+predicted_sales = multiple_linear_model.predict(X_multiple)
+ 
+plt.figure()
+plt.scatter(y, predicted_sales, label="Predictions")
+plt.plot([y.min(), y.max()], [y.min(), y.max()], color="red", label="Perfect prediction")
+plt.xlabel("Actual Sales")
+plt.ylabel("Predicted Sales")
+plt.title("Multiple Linear Regression Preview")
+plt.legend()
+plt.savefig("multiple_linear_preview.png")
+# plt.show()
+ 
