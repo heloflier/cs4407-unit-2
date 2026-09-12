@@ -9,7 +9,7 @@ and polynomial regression models.
 
 import pandas as pd
 from sklearn.preprocessing import StandardScaler, PolynomialFeatures
-from sklearn.linear_model import LinearRegression
+from sklearn.linear_model import LinearRegression, Ridge, Lasso
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
 import matplotlib
@@ -324,3 +324,30 @@ polynomial_eval_model, poly_rmse, poly_mae, poly_r2 = evaluate_model(
     "Polynomial Regression", LinearRegression(),
     X_train_poly, X_test_poly
 )
+
+# ---------------------------------------------------------------------------
+# Step 11 / Question 4b: Ridge and Lasso regression
+# ---------------------------------------------------------------------------
+# Applied to the same four features as multiple linear regression, since
+# that's the model showing multicollinearity (the flipped Advertising_Spend
+# sign in Question 3.i.b) - regularization is the standard fix for exactly
+# this kind of coefficient instability.
+ 
+print("\n" + "=" * 70)
+print("QUESTION 4b: RIDGE AND LASSO REGRESSION")
+print("=" * 70)
+ 
+ridge_model, ridge_rmse, ridge_mae, ridge_r2 = evaluate_model(
+    "Ridge Regression", Ridge(alpha=1.0),
+    train_df[feature_columns], test_df[feature_columns]
+)
+for feature_name, coefficient in zip(feature_columns, ridge_model.coef_):
+    print(f"  Coefficient ({feature_name}): {coefficient:.2f}")
+ 
+lasso_model, lasso_rmse, lasso_mae, lasso_r2 = evaluate_model(
+    "Lasso Regression", Lasso(alpha=1.0),
+    train_df[feature_columns], test_df[feature_columns]
+)
+for feature_name, coefficient in zip(feature_columns, lasso_model.coef_):
+    print(f"  Coefficient ({feature_name}): {coefficient:.2f}")
+    
