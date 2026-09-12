@@ -143,23 +143,23 @@ plt.savefig("simple_linear_preview.png")
 # With more than one predictor, there's no single x-axis to plot a fit line
 # against, so the preview below uses actual vs. predicted instead, with a
 # diagonal reference line marking perfect predictions.
- 
+
 print("\n" + "=" * 70)
 print("QUESTION 3.i.b: MULTIPLE LINEAR REGRESSION")
 print("=" * 70)
- 
+
 feature_columns = ["Advertising_Spend", "Store_Size", "Customers", "Promotion"]
 X_multiple = df[feature_columns]
- 
+
 multiple_linear_model = LinearRegression()
 multiple_linear_model.fit(X_multiple, y)
- 
+
 print(f"\nIntercept: {multiple_linear_model.intercept_:.2f}")
 for feature_name, coefficient in zip(feature_columns, multiple_linear_model.coef_):
     print(f"Coefficient ({feature_name}): {coefficient:.2f}")
- 
+
 predicted_sales = multiple_linear_model.predict(X_multiple)
- 
+
 plt.figure()
 plt.scatter(y, predicted_sales, label="Predictions")
 plt.plot([y.min(), y.max()], [y.min(), y.max()], color="red", label="Perfect prediction")
@@ -169,34 +169,34 @@ plt.title("Multiple Linear Regression Preview")
 plt.legend()
 plt.savefig("multiple_linear_preview.png")
 # plt.show()
- 
- # ---------------------------------------------------------------------------
+
+# ---------------------------------------------------------------------------
 # Step 7 / Question 3.i.c: Polynomial regression (degree 2)
 # ---------------------------------------------------------------------------
 # Built on Advertising_Spend alone, same predictor as the simple linear
 # model, to isolate the effect of adding a squared term. Extending
 # polynomial terms across all four features would produce more parameters
 # than data points (10 rows), guaranteeing an overfit.
- 
+
 print("\n" + "=" * 70)
 print("QUESTION 3.i.c: POLYNOMIAL REGRESSION (DEGREE 2)")
 print("=" * 70)
- 
+
 poly_transformer = PolynomialFeatures(degree=2, include_bias=False)
 X_poly = poly_transformer.fit_transform(X_simple)
- 
+
 polynomial_model = LinearRegression()
 polynomial_model.fit(X_poly, y)
- 
+
 print(f"\nIntercept: {polynomial_model.intercept_:.2f}")
 print(f"Coefficient (Advertising_Spend): {polynomial_model.coef_[0]:.2f}")
 print(f"Coefficient (Advertising_Spend^2): {polynomial_model.coef_[1]:.2f}")
- 
+
 # Sort by Advertising_Spend so the curve draws cleanly left to right
 sort_order = df["Advertising_Spend"].argsort()
 advertising_spend_sorted = df["Advertising_Spend"].values[sort_order]
 predicted_sales_sorted = polynomial_model.predict(X_poly)[sort_order]
- 
+
 plt.figure()
 plt.scatter(df["Advertising_Spend"], y, label="Actual")
 plt.plot(advertising_spend_sorted, predicted_sales_sorted, color="red", label="Predicted")
@@ -206,4 +206,40 @@ plt.title("Polynomial Regression Preview")
 plt.legend()
 plt.savefig("polynomial_preview.png")
 # plt.show()
+
+# ---------------------------------------------------------------------------
+# Step 8 / Question 3.ii.a: Predict sales for a new data point
+# ---------------------------------------------------------------------------
+# The new point goes through the same preprocessing as the training data:
+# same Promotion mapping, and the same fitted scaler (transform, not
+# fit_transform, so it's scaled using the training data's mean/std, not
+# its own).
+
+print("\n" + "=" * 70)
+print("QUESTION 3.ii.a: PREDICT SALES FOR A NEW DATA POINT")
+print("=" * 70)
  
+new_data_point = pd.DataFrame({
+    "Advertising_Spend": [4200],
+    "Store_Size": [2100],
+    "Customers": [290],
+    "Promotion": ["Yes"]
+})
+
+new_data_point["Promotion"] = new_data_point["Promotion"].map(promotion_mapping)
+new_data_point[feature_columns_to_scale] = scaler.transform(new_data_point[feature_columns_to_scale])
+
+print("\nNew data point after preprocessing:")
+print(new_data_point)
+ 
+new_point_simple = new_data_point[["Advertising_Spend"]]
+new_point_multiple = new_data_point[feature_columns]
+new_point_poly = poly_transformer.transform(new_point_simple)
+
+simple_prediction = simple_linear_model.predict(new_point_simple)[0]
+multiple_prediction = multiple_linear_model.predict(new_point_multiple)[0]
+polynomial_prediction = polynomial_model.predict(new_point_poly)[0]
+
+print(f"\nSimple linear regression prediction: {simple_prediction:.2f}")
+print(f"Multiple linear regression prediction: {multiple_prediction:.2f}")
+print(f"Polynomial regression prediction: {polynomial_prediction:.2f}")
