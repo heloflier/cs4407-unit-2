@@ -243,3 +243,29 @@ polynomial_prediction = polynomial_model.predict(new_point_poly)[0]
 print(f"\nSimple linear regression prediction: {simple_prediction:.2f}")
 print(f"Multiple linear regression prediction: {multiple_prediction:.2f}")
 print(f"Polynomial regression prediction: {polynomial_prediction:.2f}")
+
+# ---------------------------------------------------------------------------
+# Step 9 / Question 3.ii.b: Plot actual vs predicted for all models
+# ---------------------------------------------------------------------------
+# All three models plotted on the same actual-vs-predicted axes so they
+# can be compared directly, rather than as three separate figures.
+
+print("\n" + "=" * 70)
+print("QUESTION 3.ii.b: PLOT ACTUAL VS PREDICTED (ALL MODELS)")
+print("=" * 70)
+
+simple_predicted_sales = simple_linear_model.predict(X_simple)
+polynomial_predicted_sales = polynomial_model.predict(X_poly)
+
+plt.figure()
+plt.scatter(y, simple_predicted_sales, label="Simple Linear")
+plt.scatter(y, predicted_sales, label="Multiple Linear")
+plt.scatter(y, polynomial_predicted_sales, label="Polynomial")
+plt.plot([y.min(), y.max()], [y.min(), y.max()], color="red", linestyle="--", label="Perfect prediction")
+plt.xlabel("Actual Sales")
+plt.ylabel("Predicted Sales")
+plt.title("Actual vs Predicted Sales - All Models")
+plt.legend()
+plt.savefig("all_models_actual_vs_predicted.png")
+print("\nSaved plot: all_models_actual_vs_predicted.png")
+# plt.show()
